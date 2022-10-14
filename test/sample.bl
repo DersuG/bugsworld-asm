@@ -1,0 +1,7 @@
+PROGRAM sample IS
+BEGIN
+  WHILE true DO
+    turnleft
+    move
+  END WHILE
+END sample
