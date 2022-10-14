@@ -114,8 +114,8 @@ def compile(source_code: str) -> list[int]:
 
 def main():
 
-    source_filepath = 'test/sample.bsm'
-    destination_filepath = 'test/sample.bo'
+    source_filepath = 'examples/sample.bsm'
+    destination_filepath = 'examples/sample.bo'
 
     # Load source file:
     with open(source_filepath) as f:
