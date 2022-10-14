@@ -1,40 +1,14 @@
-; The syntax for this assembly-like language is derived from:
-; https://users.ece.utexas.edu/~valvano/assmbly/syntax.htm
+; This is a bsm version of the sample.bl program. The source is copied here for reference.
+; PROGRAM sample IS
+; BEGIN
+;   WHILE true DO
+;     turnleft
+;     move
+;   END WHILE
+; END sample
 
-; This is a comment!
-; Each source statement is structured like:
-; label operation operand ; comment
-
-Begin   inf             ; Begin program, try to gain speed advantage by infecting first.
-
-Main                    ; Main loop
-
-; Attempt to infect any enemies, then perform "Avoid" behavior.
-Infect  cenemy  Empty   ; If not enemy, check for obstacles.
-        inf             ; Otherwise, infect.
-        jmp     Avoid   ; Finally, avoid.
-
-; Check for obstacles
-Empty   cempty  Avoid   ; If not empty, avoid.
-        jmp     Explore ; Otherwise, explore.
-
-; Avoid obstacles by turning in a random direction.
-Avoid   crand   Right   ; If crand condition fails, turn right. Otherwise, turn left.
+Begin   ctrue   End     ; If not true, terminate.
         tnl             ; Turn left
-        jmp     Main    ; Restart main loop
-Right   tnr             ; Turn right
-        jmp     Main    ; Restart main loop
-
-; Walk in a direction.
-Explore mov             ; Walk
-        jmp     Main    ; Restart main loop
-
+        mov             ; Move
+        jmp     Begin   ; Restart
 End                     ; End program
-
-; This program should compile to:
-; 22 03 13 06
-; 03 06 10 07
-; 10 06 18 15
-; 15 01 06 01
-; 02 06 01 00
-; 06 01 05
