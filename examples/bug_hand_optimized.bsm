@@ -1,0 +1,35 @@
+; Original .bl program:
+; INSTRUCTION Process IS
+;     IF next-is-enemy THEN
+;         infect
+;         turnleft
+;     ELSE
+;         IF next-is-empty THEN
+;             move
+;         ELSE
+;             turnleft
+;         END IF
+;     END IF
+; END Process
+; 
+; BEGIN
+;     infect
+;     WHILE true DO
+;         Process
+;     END WHILE
+; END Z
+
+                inf                     ; Start by infecting, to gain any possible speed advantage.
+
+ProcessLoop     cenemy  CheckForEmpty   ; Always try to infect faster to win any duels.
+                inf                     ; Infect
+                tnl                     ; Turn left, because we were facing target.
+                jmp     ProcessLoop     ; Repeat process loop.
+
+CheckForEmpty   cempty  NotEmpty        ; Move if empty.
+                mov                     ; Move
+                jmp     ProcessLoop     ; Repeat process loop.
+
+NotEmpty        tnl                     ; Not empty, so turn away.
+                jmp     ProcessLoop     ; Repeat process loop.
+

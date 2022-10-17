@@ -1,0 +1,21 @@
+PROGRAM Z IS
+
+INSTRUCTION Process IS
+        IF next-is-enemy THEN
+                infect
+                turnleft
+        ELSE
+                IF next-is-empty THEN
+                        move
+                ELSE
+                        turnleft
+                END IF
+        END IF
+END Process
+
+BEGIN
+        infect
+        WHILE true DO
+                Process
+        END WHILE
+END Z
