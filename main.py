@@ -1,13 +1,4 @@
-import enum
-
-
-
-def is_label(token: str) -> bool:
-    if len(token) <= 0:
-        return False
-    if token[0] in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ':
-        return True
-    return False
+import argparse
 
 opcodes: dict[str, int] = {
     'mov':      0,
@@ -24,6 +15,13 @@ opcodes: dict[str, int] = {
     'crand':    15,
     'ctrue':    16,
 }
+
+def is_label(token: str) -> bool:
+    if len(token) <= 0:
+        return False
+    if token[0] in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ':
+        return True
+    return False
 
 def print_source(lines: list[str], description=''):
     print(description)
@@ -50,14 +48,15 @@ def print_program(opcodes: list[int], description=''):
             print('')
     print('')
 
-def compile(source_code: str) -> list[int]:
+def compile(source_code: str, is_verbose=False) -> list[int]:
     program: list[int] = []
 
     lines: list[str] = source_code.splitlines()
 
     jump_table: dict[str, int] = {}
     
-    print_source(lines, 'Original source code:')
+    if is_verbose:
+        print_source(lines, 'Original source code:')
 
     # Remove comments:
     temp: list[str] = []
@@ -68,7 +67,8 @@ def compile(source_code: str) -> list[int]:
         else:
             temp.append(line)
     lines = temp
-    print_source(lines, 'Comments removed:')
+    if is_verbose:
+        print_source(lines, 'Comments removed:')
 
     # Remove empty lines:
     temp: list[str] = []
@@ -76,7 +76,8 @@ def compile(source_code: str) -> list[int]:
         if line.strip() != '':
             temp.append(line)
     lines = temp
-    print_source(lines, 'Empty lines removed:')
+    if is_verbose:
+        print_source(lines, 'Empty lines removed:')
 
     # Remove label definitions and build jump table:
     temp: list[str] = []
@@ -92,8 +93,9 @@ def compile(source_code: str) -> list[int]:
         if line != '':
             temp.append(line)
     lines = temp
-    print_source(lines, 'Label definitions removed:')
-    print_jump_table(jump_table, 'Jump table:')
+    if is_verbose:
+        print_source(lines, 'Label definitions removed:')
+        print_jump_table(jump_table, 'Jump table:')
 
     # Parse tokens:
     for line in lines:
@@ -108,20 +110,21 @@ def compile(source_code: str) -> list[int]:
     program.append(opcodes['end'])
     program.insert(0, len(program))
 
-    print_program(program, 'Final program:')
+    if is_verbose:
+        print_program(program, 'Final program:')
 
     return program
 
-def main():
+def main(args: argparse.Namespace):
 
-    source_filepath = 'examples/sample.bsm'
-    destination_filepath = 'examples/sample.bo'
+    source_filepath = args.input[0]
+    destination_filepath = args.output
 
     # Load source file:
     with open(source_filepath) as f:
         text = f.read()
 
-    program = compile(text)
+    program = compile(text, is_verbose=args.verbose)
 
     with open(destination_filepath, 'w') as f:
         while len(program) > 0:
@@ -130,6 +133,31 @@ def main():
 
             if len(program) > 0:
                 f.write('\n')
+    
+    print(f'Output written to {destination_filepath}')
 
 if __name__ == '__main__':
-    main()
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        'input',
+        nargs=1,
+        type=str,
+        help='Specify source code file'
+    )
+    parser.add_argument(
+        '-o', '--output',
+        dest='output',
+        required=True,
+        type=str,
+        help='Specify destination file',
+    )
+    parser.add_argument(
+        '-v', '--verbose',
+        dest='verbose',
+        action='store_true',
+        help='Show verbose compiler output'
+    )
+    args = parser.parse_args()
+
+    main(args)
